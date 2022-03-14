@@ -5,8 +5,6 @@ let logo;
 let pi;
 let sky;
 let piShow = '';
-let shareButtons = [];
-let platforms = ['Twitter', 'Facebook', 'WhatsApp', 'Telegram'];
 
 let digitsDiv;
 let digits = '3.';
@@ -31,17 +29,14 @@ function setup() {
   start = true;
   let col = color(25, 23, 200, 50);
   platform = 0;
-  for (let i = 0; i < 4; i++) {
-    button = createButton(platforms[i]);
-    button.style('background-color', col);
-    button.size(width / 8, height / 16);
-    button.position(width / 2 + (3 * width) / 16 - (2.5 * i * width) / 16, (23 * height) / 32);
-    button.style('border-radius:10px');
-    button.style('font-size : 20px');
-    button.mousePressed(copyScore(i));
-    button.hide();
-    shareButtons.push(button);
-  }
+  shareButton = createButton('share');
+  shareButton.style('background-color', col);
+  shareButton.size(width / 8, height / 16);
+  shareButton.position(width / 2, (23 * height) / 32);
+  shareButton.style('border-radius:10px');
+  shareButton.style('font-size : 20px');
+  shareButton.mousePressed(copyScore);
+  shareButton.hide();
 }
 
 function draw() {
@@ -62,10 +57,8 @@ function draw() {
     );
 
     textSize(28);
-    for (let button of shareButtons) {
-      button.show();
-    }
-    text('Press p to play again.', width / 2, (5 * height) / 6);
+    shareButton.show();
+    text('tap to play again.', width / 2, (5 * height) / 6);
     pop();
     return;
   }
@@ -79,7 +72,7 @@ function draw() {
     textAlign(CENTER, BOTTOM);
     text('Welcome to PI in the sky!\nCatch the digits of PI on your plate!', width / 2, height / 2);
     textSize(28);
-    text('Press p to play!', width / 2, (5 * height) / 6);
+    text('tap to play!', width / 2, (5 * height) / 6);
     pop();
     return;
   }
@@ -131,8 +124,8 @@ function draw() {
   plate.show();
 }
 
-function keyPressed() {
-  if (keyCode == '80' && (gameOver || start)) {
+function mousePressed() {
+  if (gameOver || start) {
     digits = '3.';
     plate = new Plate(width / 2, 50);
     piShow = pi.substring(0, 2);
@@ -140,25 +133,15 @@ function keyPressed() {
     pies = [];
     start = false;
     gameOver = false;
-    for (let button of shareButtons) {
-      button.hide();
-    }
+    shareButton.hide();
   }
 }
 
-function copyScore(index) {
+function copyScore() {
   return function () {
     let scoreString = encodeURIComponent(
       'I got a score of: ' + digits + ' in PI in the Sky! Try it yourself now!'
     );
-    let urlString = encodeURIComponent('https://thecodingtrain.com/pi2022');
-
-    let twitter = 'https://twitter.com/intent/tweet?text=' + scoreString + '&url=' + urlString;
-    let facebook =
-      'https://www.facebook.com/sharer/sharer.php?u=' + urlString + '&quote=' + scoreString;
-    let whatsApp = 'https://wa.me/?text=' + scoreString + ' ' + urlString;
-    let telegram = 'https://t.me/share/url?url=' + urlString + '&text=' + scoreString;
-    let links = [twitter, facebook, whatsApp, telegram];
-    window.open(links[index]);
+    navigator.clipboard.writeText(scoreString);
   };
 }
