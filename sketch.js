@@ -84,7 +84,7 @@ function draw() {
   text(piShow.charAt(0), width - 64, 50);
   fill(0, 0, 255);
   textSize(48);
-  let overflow = digits.length > 5;
+  let overflow = digits.length > 10;
   text('🥧:' + (overflow ? '...' : '') + digits.slice(-10), 18, 50);
 
   if (random(1) < 0.1) {
